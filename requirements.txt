@@ -1,0 +1,2 @@
+pydeepl~=0.13
+requests~=2.24.0
