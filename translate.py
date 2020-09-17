@@ -5,7 +5,7 @@ from sys import argv
 from typing import List
 
 
-from deepl import translate
+from deepl import translate, translate_batch
 
 
 def get_xliff_files() -> List[str]:
@@ -45,14 +45,12 @@ for file in [f for f in get_xliff_files() if 'translated' not in f]:
 
     print('Opening ' + file + ', translate from ' + source_language.upper() + ' to ' + target_language.upper())
 
-    for unit in units:
-        print('\rTranslation... ' + str(int(units.index(unit) / len(units) * 100)) + '%', end='')
-        try:
-            if unit[0].text is not None and unit[1].attrib["state"] == "needs-translation":
-                unit[1].text = translate(unit[0].text, from_lang=source_language, to_lang=target_language, formality=formality)
-        except Exception as e:
-            print("Error during translation because:" + str(e))
-            continue
+    units_to_translate = [unit for unit in units if
+                          unit[0].text is not None and unit[1].attrib["state"] == "needs-translation"]
+    translated_texts = translate_batch([unit[0].text for unit in units_to_translate], source_language, target_language)
+
+    for unit, translated_text in zip(units_to_translate, translated_texts):
+        unit[1].text = translated_text
 
     print('\rTranslation... 100%')
     replaced = ET.tostring(root, encoding="unicode")\
