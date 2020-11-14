@@ -30,11 +30,11 @@ def translate_batch(texts: List[str], to_lang: str, from_lang: str = None, forma
 
     # clone the list
     total_texts = len(texts)
-    texts = [texts]
+    texts = texts.copy()
 
     translated_texts = []
 
-    while len(texts) > 50:
+    while len(texts) > 0:
         if verbose:
             print('\rTranslation... ' + str(len(translated_texts) / total_texts * 100) + '%', end='')
 
@@ -56,5 +56,5 @@ def translate_batch(texts: List[str], to_lang: str, from_lang: str = None, forma
             else:
                 raise Exception('DeepL API returned an error ' + str(r.status_code))
 
-        translated_texts += [translation.text for translation in r.json()['translations']]
+        translated_texts += [translation['text'] for translation in r.json()['translations']]
     return translated_texts

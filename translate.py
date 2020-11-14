@@ -47,7 +47,7 @@ for file in [f for f in get_xliff_files() if 'translated' not in f]:
 
     units_to_translate = [unit for unit in units if
                           unit[0].text is not None and unit[1].attrib["state"] == "needs-translation"]
-    translated_texts = translate_batch([unit[0].text for unit in units_to_translate], source_language, target_language)
+    translated_texts = translate_batch([unit[0].text for unit in units_to_translate], target_language, source_language)
 
     for unit, translated_text in zip(units_to_translate, translated_texts):
         unit[1].text = translated_text
